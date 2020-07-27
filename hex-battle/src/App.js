@@ -5,8 +5,11 @@ import { ColorWrap } from 'react-color/lib/components/common';
 
 class App extends React.Component {
   state = {
-    goalColor: '#56364f"',
-    currentColor: '#123456'
+    goalColor: '#56364f',
+    currentColor: '#123456',
+    totalScore: 1923,
+    currentRound: 1,
+    totalRound: 5
   }
 
   onChange = (e) => {
@@ -21,11 +24,11 @@ class App extends React.Component {
           <h1 className="title">HEX BATTLE</h1>
         </div>
         <div className="stats-container">
-          <h2>Round 1/5</h2>
-          <h2>Score: 1579</h2>
+          <h3>ROUND {this.state.currentRound}/{this.state.totalRound}</h3>
+          <h3>SCORE: {this.state.totalScore}</h3>
         </div>
         <div className="inst-container">
-          <h2>{this.state.goalColor}</h2>
+          <h2>{this.state.goalColor.toUpperCase()}</h2>
         </div>
         <div className="picker-container">
           <ColorPicker 
