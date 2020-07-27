@@ -1,0 +1,17 @@
+.picker {
+	border:1px solid red;
+}
+
+.saturation {
+	width: 500px;
+	height: 300px;
+	position: relative;
+	margin: 16px 0px;
+}
+
+.hue {
+	width: 500px;
+	height: 15px;
+	position: relative;
+	margin-top: 8px;
+}
