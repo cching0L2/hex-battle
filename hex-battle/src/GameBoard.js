@@ -61,6 +61,35 @@ const styles = reactCSS({
   },
 })
 
+function StatsSection(props) {
+  return (
+    <div style={ styles.statsContainer }>
+      { props.totalRound > 1 && <h3 style={ styles.stats }>ROUND { props.currentRound } / { props.totalRound }</h3> }
+      <h3 style={ styles.stats }>SCORE: { Math.round(props.totalScore) } / { Constants.ROUND_MAX_SCORE }</h3>
+    </div>
+  );
+}
+
+function InstructionSection(props) {
+  return (
+    <div style={ styles.statsContainer }>
+      <h4 style={ styles.instruction }>Use color picker below to pick out the color:</h4>
+      <h2 style={ styles.goalColor }>{ props.goalColor && props.goalColor.toUpperCase() }</h2>
+    </div>
+  );
+}
+
+function PickerSection(props) {
+  return (
+    <div style={ styles.pickerContainer }>
+      <ColorPicker 
+        onChangeComplete={ props.onChange }
+        color={ props.currentColor }
+      />
+    </div>
+  );
+}
+
 /*
  * Game logic
  *
@@ -122,25 +151,18 @@ class GameBoard extends React.Component {
           <h1 style={ styles.title }>HEX BATTLE</h1>
         </div>
 
-        <div style={ styles.statsContainer }>
-          { this.state.totalRound > 1 && <h3 style={ styles.stats }>ROUND { this.state.currentRound } / { this.state.totalRound }</h3> }
-          <h3 style={ styles.stats }>SCORE: { Math.round(this.state.totalScore) } / { Constants.ROUND_MAX_SCORE }</h3>
-        </div>
+        <StatsSection
+          totalRound={ this.state.totalRound }
+          currentRound={ this.state.currentRound }
+          totalScore={ this.state.totalScore }
+        />
 
         { this.state.isRoundActive && 
-          <div style={ styles.statsContainer }>
-            <h4 style={ styles.instruction }>Use color picker below to pick out the color:</h4>
-            <h2 style={ styles.goalColor }>{ this.state.goalColor && this.state.goalColor.toUpperCase() }</h2>
-          </div>
+          <InstructionSection goalColor={ this.state.goalColor }/>
         }
 
         { this.state.isRoundActive && 
-          <div style={ styles.pickerContainer }>
-            <ColorPicker 
-              onChangeComplete={ this.onChange }
-              color={ this.state.currentColor }
-            />
-          </div>
+          <PickerSection onChange={ this.onChange } currentColor={ this.state.currentColor } />
         }
 
         <h3 style={ styles.yourPick }>Your pick:</h3>
