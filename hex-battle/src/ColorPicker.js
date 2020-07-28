@@ -6,6 +6,29 @@ import { ColorWrap } from 'react-color/lib/components/common';
 import { Hue, Saturation, Alpha } from 'react-color/lib/components/common';
 import './ColorPicker.css';
 
+const styles = reactCSS({
+  'default': {
+    colorPicker: {
+      border: '1px solid grey',
+      boxShadow: '1px',
+      padding: '18px',
+      borderRadius: '4px',
+      boxShadow: '0 6px 12px rgba(0,0,0,.20)',
+    },
+    saturation: {
+      width: '400px',
+      height: '240px',
+      position: 'relative'
+    },
+    hue: {
+      width: '400px',
+      height: '15px',
+      position: 'relative',
+      marginTop: '32px',
+    }
+  }
+});
+
 class Component extends React.Component {
 
   SliderPointer = () => {
@@ -29,8 +52,8 @@ class Component extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="saturation">
+      <div style={ styles.colorPicker }>
+        <div style={ styles.saturation }>
           <Saturation
             hsl={ this.props.hsl }
             hsv={ this.props.hsv }
@@ -39,7 +62,7 @@ class Component extends React.Component {
         </div>
         <div>
           <div>
-            <div className="hue">
+            <div style={ styles.hue }>
               <Hue
                 hsl={ this.props.hsl }
                 onChange={ this.props.onChange }

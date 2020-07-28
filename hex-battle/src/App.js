@@ -27,13 +27,17 @@ const styles = reactCSS({
       marginTop: '36px',
     },
     instruction: {
-      color: '#D90368'
+      color: '#D90368',
+      margin: '8px'
+    },
+    goalColor: {
+      marginTop: '8px'
     },
     pickerContainer: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      margin: '24px 0px'
+      margin: '36px 0px'
     },
     yourPick: {
       color: "#474056",
@@ -51,7 +55,7 @@ const styles = reactCSS({
       fontFamily: "Nunito",
       marginTop: '24px',
       fontSize: '22px',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     }
   },
 })
@@ -81,12 +85,12 @@ class App extends React.Component {
           <h1 style={ styles.title }>HEX BATTLE</h1>
         </div>
         <div style={ styles.statsContainer }>
-          <h3 style={ styles.stats }>ROUND {this.state.currentRound}/{this.state.totalRound}</h3>
+          <h3 style={ styles.stats }>ROUND {this.state.currentRound} / {this.state.totalRound}</h3>
           <h3 style={ styles.stats }>SCORE: {this.state.totalScore}</h3>
         </div>
         <div style={ styles.statsContainer }>
           <h4 style={ styles.instruction }>Use color picker below to pick out the color:</h4>
-          <h2>{this.state.goalColor.toUpperCase()}</h2>
+          <h2 style={ styles.goalColor }>{this.state.goalColor.toUpperCase()}</h2>
         </div>
         <div style={ styles.pickerContainer }>
           <ColorPicker 
@@ -98,6 +102,7 @@ class App extends React.Component {
         <div style={ Object.assign({backgroundColor: this.state.currentColor}, styles.chosen) }></div>
         <button
           style={ styles.confirm }
+          className="confirm-btn"
           onClick={ this.onConfirm }
         >Confirm</button>
       </div>

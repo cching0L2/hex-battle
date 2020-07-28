@@ -1,0 +1,8 @@
+.confirm-btn:hover {
+	color: #D90368;
+	cursor: pointer;
+}
+
+.confirm-btn:focus {
+	outline: none;
+}
