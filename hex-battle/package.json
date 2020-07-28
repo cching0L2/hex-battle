@@ -10,7 +10,8 @@
     "react-color": "^2.18.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "reactcss": "^1.2.3"
+    "reactcss": "^1.2.3",
+    "tinycolor2": "^1.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
