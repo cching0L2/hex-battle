@@ -53,13 +53,75 @@ const styles = reactCSS({
     confirm: {
       backgroundColor: 'transparent',
       border: 'none',
-      fontFamily: "Nunito",
       marginTop: '24px',
       fontSize: '22px',
       fontWeight: 'bold',
+    },
+    breakdownContainer: {
+      width: '480px',
+      height: '240px',
+      margin: 'auto',
+      textAlign: "center",
     }
   },
 })
+
+function RoundActiveSection(props) {
+  return (
+    <div>
+      <StatsSection
+        totalRound={ props.totalRound }
+        currentRound={ props.currentRound }
+        totalScore={ props.totalScore }
+      />
+      <InstructionSection goalColor={ props.goalColor }/>
+      <PickerSection onChange={ props.onChange } currentColor={ props.currentColor } />
+      <h3 style={ styles.yourPick }>Your pick:</h3>
+        <div style={ Object.assign({backgroundColor: props.currentColor}, styles.chosen) }></div>
+        <button
+          style={ styles.confirm }
+          className="confirm-btn"
+          onClick={ props.onConfirm }
+        >Confirm</button>
+    </div>
+  );
+}
+
+function RoundResultSection(props) {
+  return (
+    <div>
+      { HexToRgbBreakdown(props) }
+      <h3>You received { Math.round(props.totalScore) } / 5000 for this round </h3>
+    </div>
+  );
+}
+
+function HexToRgbBreakdown(props) {
+  return (
+    <table style={ styles.breakdownContainer }>
+      <tr>
+        <th>Actual</th>
+        <th>Difference</th>
+        <th>You picked</th>
+      </tr>
+      <tr>
+        <td>R: 95</td>
+        <td>(-109)</td>
+        <td>R: 102</td>
+      </tr>
+      <tr>
+        <td>G: 5</td>
+        <td>(+8)</td>
+        <td>G: 89</td>
+      </tr>
+      <tr>
+        <td>B: 36</td>
+        <td>(-53)</td>
+        <td>B: 22</td>
+      </tr>
+    </table>
+  );
+}
 
 function StatsSection(props) {
   return (
@@ -151,27 +213,25 @@ class GameBoard extends React.Component {
           <h1 style={ styles.title }>HEX BATTLE</h1>
         </div>
 
-        <StatsSection
-          totalRound={ this.state.totalRound }
-          currentRound={ this.state.currentRound }
-          totalScore={ this.state.totalScore }
-        />
+        { !this.state.isRoundActive && 
+          <RoundActiveSection
+            goalColor={ this.state.goalColor }
+            currentColor={ this.state.currentColor }
+            totalRound={ this.state.totalRound }
+            currentRound={ this.state.currentRound }
+            totalScore={ this.state.totalScore }
+            onChange={ this.onChange }
+            onConfirm={ this.onConfirm }
+          />
+         }
 
-        { this.state.isRoundActive && 
-          <InstructionSection goalColor={ this.state.goalColor }/>
+        { this.state.isRoundActive &&
+          <RoundResultSection
+            goalColor={ this.state.goalColor }
+            currentColor={ this.state.currentColor }
+            totalScore={ this.state.totalScore }
+          />
         }
-
-        { this.state.isRoundActive && 
-          <PickerSection onChange={ this.onChange } currentColor={ this.state.currentColor } />
-        }
-
-        <h3 style={ styles.yourPick }>Your pick:</h3>
-        <div style={ Object.assign({backgroundColor: this.state.currentColor}, styles.chosen) }></div>
-        <button
-          style={ styles.confirm }
-          className="confirm-btn"
-          onClick={ this.onConfirm }
-        >Confirm</button>
       </div>
     );
   }
