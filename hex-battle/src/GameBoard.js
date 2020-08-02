@@ -1,5 +1,6 @@
 import React from 'react';
 import reactCSS from 'reactcss'
+import * as _ from 'underscore'
 import ColorPicker from './ColorPicker';
 import * as Utils from './utils';
 import * as Constants from './constants';
@@ -44,24 +45,27 @@ const styles = reactCSS({
       color: "#474056",
       marginTop: '32px'
     },
-    chosen: {
+    preview: {
       height: "60px",
       width: "100px",
       border: "1px solid #AAA",
       margin: "auto"
     },
-    confirm: {
+    button: {
       backgroundColor: 'transparent',
       border: 'none',
       marginTop: '24px',
-      fontSize: '22px',
+      fontSize: '20px',
       fontWeight: 'bold',
     },
     breakdownContainer: {
       width: '480px',
       height: '240px',
-      margin: 'auto',
+      margin: '0px auto 60px auto',
       textAlign: "center",
+    },
+    breakdownHeader: {
+      margin: '4px',
     }
   },
 })
@@ -77,48 +81,85 @@ function RoundActiveSection(props) {
       <InstructionSection goalColor={ props.goalColor }/>
       <PickerSection onChange={ props.onChange } currentColor={ props.currentColor } />
       <h3 style={ styles.yourPick }>Your pick:</h3>
-        <div style={ Object.assign({backgroundColor: props.currentColor}, styles.chosen) }></div>
+        <ColorPreviewBlock color={ props.currentColor } />
         <button
-          style={ styles.confirm }
-          className="confirm-btn"
+          style={ styles.button }
+          className="btn"
           onClick={ props.onConfirm }
         >Confirm</button>
     </div>
   );
 }
 
+function ColorPreviewBlock(props) {
+  const newStyle = {
+    backgroundColor: props.color,
+    width: props.width,
+    height: props.height
+  }
+
+  console.log(_.defaults(newStyle, styles.preview));
+
+  return (
+    <div style={ _.defaults(newStyle, styles.preview) }></div>
+  );
+}
+
 function RoundResultSection(props) {
   return (
     <div>
-      { HexToRgbBreakdown(props) }
+      <HexToRgbBreakdown
+        currentColor={ props.currentColor }
+        goalColor={ props.goalColor }
+      />
       <h3>You received { Math.round(props.totalScore) } / 5000 for this round </h3>
+      <button
+          style={ styles.button }
+          className="btn play-again-btn"
+          onClick={ props.onPlayAgain }
+        >Play Again</button>
     </div>
   );
 }
 
 function HexToRgbBreakdown(props) {
+  const currentColorRgb = Utils.hexToRgb(props.currentColor);
+  const goalColorRgb = Utils.hexToRgb(props.goalColor);
+
   return (
     <table style={ styles.breakdownContainer }>
-      <tr>
-        <th>Actual</th>
-        <th>Difference</th>
-        <th>You picked</th>
-      </tr>
-      <tr>
-        <td>R: 95</td>
-        <td>(-109)</td>
-        <td>R: 102</td>
-      </tr>
-      <tr>
-        <td>G: 5</td>
-        <td>(+8)</td>
-        <td>G: 89</td>
-      </tr>
-      <tr>
-        <td>B: 36</td>
-        <td>(-53)</td>
-        <td>B: 22</td>
-      </tr>
+      <thead>
+        <tr style={{verticalAlign: "text-top"}}>
+          <th>
+            <h4>Actual</h4>
+            <ColorPreviewBlock height="40px" width="60px" color={ props.goalColor } />
+            <h5>{ props.goalColor && props.goalColor.toUpperCase() }</h5>
+          </th>
+          <th>Difference</th>
+          <th>
+            <h4>You picked</h4>
+            <ColorPreviewBlock height="40px" width="60px" color={ props.currentColor } />
+            <h5>{ props.currentColor && props.currentColor.toUpperCase() }</h5>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style={{color: "red"}}> 
+          <td><span>R</span>: { goalColorRgb.r }</td>
+          <td>({ goalColorRgb.r - currentColorRgb.r })</td>
+          <td>R: { currentColorRgb.r }</td>
+        </tr>
+        <tr style={{color: "green"}}> 
+          <td>G: { goalColorRgb.g }</td>
+          <td>({ goalColorRgb.g - currentColorRgb.g })</td>
+          <td>G: { currentColorRgb.g }</td>
+        </tr>
+        <tr style={{color: "blue"}}> 
+          <td>B: { goalColorRgb.b }</td>
+          <td>({ goalColorRgb.b - currentColorRgb.b })</td>
+          <td>B: { currentColorRgb.b }</td>
+        </tr>
+      </tbody>
     </table>
   );
 }
@@ -182,25 +223,35 @@ class GameBoard extends React.Component {
     this.endRound();
   }
 
+  onPlayAgain = () => {
+    const isFreshStart = (this.state.currentRound >= this.state.totalRound) ? true : false;
+
+    if (isFreshStart) {
+      this.setState({
+        totalScore: 0
+      });
+      this.startRound(1);
+    } else {
+      this.startRound(this.stae.currentRound + 1);
+    }
+  }
+
   startRound = (roundNumber) => {
     this.setState({
       goalColor: Utils.getRandomColor(),
       currentColor: Utils.getRandomColor(),
       currentRound: roundNumber,
-      isRoundActive: true
+      isRoundActive: true,
     });
   }
 
   endRound = () => {
-    // TODO: do scoring here
     const colorDist = Utils.calcColorDistance(this.state.goalColor, this.state.currentColor);
-    console.log("colorDist: " + colorDist);
     const score = Utils.mapColorDistToRoundScore(colorDist);
-    console.log(score);
 
     this.setState({
       isRoundActive: false,
-      totalScore: score
+      totalScore: score,
     })
 
     // TODO: show end screen
@@ -213,7 +264,7 @@ class GameBoard extends React.Component {
           <h1 style={ styles.title }>HEX BATTLE</h1>
         </div>
 
-        { !this.state.isRoundActive && 
+        { this.state.isRoundActive && 
           <RoundActiveSection
             goalColor={ this.state.goalColor }
             currentColor={ this.state.currentColor }
@@ -225,11 +276,12 @@ class GameBoard extends React.Component {
           />
          }
 
-        { this.state.isRoundActive &&
+        { !this.state.isRoundActive && 
           <RoundResultSection
             goalColor={ this.state.goalColor }
             currentColor={ this.state.currentColor }
             totalScore={ this.state.totalScore }
+            onPlayAgain={ this.onPlayAgain }
           />
         }
       </div>

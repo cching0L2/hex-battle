@@ -7,6 +7,24 @@ export const getRandomColor = () => {
 }
 
 /* 
+ * Converts color from hex to RGB, returns RGB for black color
+ * if hex is invalid
+ */
+export const hexToRgb = (color) => {
+  const tinyColor = tinycolor(color);
+
+  if (!tinyColor.isValid()) {
+    return {
+      r: 0,
+      g: 0,
+      b: 0
+    }
+  }
+
+  return tinyColor.toRgb();
+}
+
+/* 
  * Returns distance between two colors in RGB space
  * Returns -1 if inputs are not valid
  */
@@ -21,15 +39,20 @@ export const calcColorDistance = (color, otherColor) => {
   const color1Rgb = color1.toRgb();
   const color2Rgb = color2.toRgb();
 
-  return Math.hypot(color1Rgb.r - color2Rgb.r, color1Rgb.g - color2Rgb.g, color1Rgb.b - color2Rgb.b)
+  return {
+    rDiff: color1Rgb.r - color2Rgb.r,
+    gDiff: color1Rgb.g - color2Rgb.g,
+    bDiff: color1Rgb.b - color2Rgb.b,
+    dist: Math.hypot(color1Rgb.r - color2Rgb.r, color1Rgb.g - color2Rgb.g, color1Rgb.b - color2Rgb.b)
+  }
 }
 
 /*
  * Map score from [0,441.6] to [ROUND_MAX_SCORE,0]
  */
 export const mapColorDistToRoundScore = (colorDist) => {
-  const ratio = colorDist / Constants.MAX_COLOR_DIST;
+  const ratio = colorDist.dist / Constants.MAX_COLOR_DIST;
   const penalty = Constants.ROUND_MAX_SCORE * ratio;
-  
+
   return Constants.ROUND_MAX_SCORE - penalty;
 }

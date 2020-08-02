@@ -1,8 +1,17 @@
-.confirm-btn:hover {
+.btn:hover {
 	color: #D90368;
 	cursor: pointer;
 }
 
-.confirm-btn:focus {
+.btn:focus {
 	outline: none;
+}
+
+.play-again-btn {
+	color: #D90368;
+	font-size: 24px;
+}
+
+.play-again-btn:hover {
+	color: #55868C;
 }
